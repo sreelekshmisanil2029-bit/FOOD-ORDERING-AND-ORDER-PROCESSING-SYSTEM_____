@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Food Ordering System</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 30px 15px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff9966, #ff5e62, #845ec2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 650px;
+    background: white;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 35px #0003;
+}
+
+header {
+    background: linear-gradient(120deg, #ff6b35, #f44369);
+    color: white;
+    text-align: center;
+    padding: 28px 15px;
+}
+
+header h1 {
+    margin: 10px 0;
+}
+
+header p {
+    margin-bottom: 0;
+}
+
+form {
+    padding: 28px;
+}
+
+h2 {
+    color: #e65359;
+    font-size: 20px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin: 15px 0 7px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    background: #fffdfd;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: 2px solid #ffb3a0;
+    border-color: #ff6b6b;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 75px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 9px;
+    background: linear-gradient(100deg, #ff6b35, #f44369);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.reset {
+    margin-top: 10px;
+    background: #e9eaf0;
+    color: #333;
+}
+
+#result {
+    display: none;
+    margin: 0 28px 25px;
+    padding: 20px;
+    background: #eaffef;
+    border: 1px solid #a5dfb5;
+    border-radius: 10px;
+    overflow-wrap: anywhere;
+}
+
+#result h2 {
+    color: #21834a;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    font-size: 12px;
+    padding: 0 15px 20px;
+}
+
+@media (max-width: 500px) {
+    form {
+        padding: 20px;
+    }
+
+    #result {
+        margin: 0 20px 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+    <div style="font-size:40px">🍔 🍕 🍟</div>
+    <h1>Food Ordering System</h1>
+    <p>Fresh cravings, easy ordering!</p>
+</header>
+
+<form id="orderForm">
+
+    <h2>👤 Customer Details</h2>
+
+    <label for="name">Your Name *</label>
+    <input type="text" id="name" placeholder="Enter your name" required>
+
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" placeholder="Enter phone number">
+
+    <label for="address">Delivery Address *</label>
+    <textarea id="address" placeholder="Enter your address" required></textarea>
+
+    <h2>🍽️ Choose Your Food</h2>
+
+    <label for="food">Food Item *</label>
+    <select id="food" required>
+        <option value="">-- Select Food --</option>
+        <option value="Veg Burger" data-price="90">Veg Burger - ₹90</option>
+        <option value="Chicken Burger" data-price="130">Chicken Burger - ₹130</option>
+        <option value="Pizza" data-price="180">Pizza - ₹180</option>
+        <option value="French Fries" data-price="80">French Fries - ₹80</option>
+        <option value="Sandwich" data-price="70">Sandwich - ₹70</option>
+        <option value="Pasta" data-price="160">Pasta - ₹160</option>
+        <option value="Biriyani" data-price="180">Biriyani - ₹180</option>
+        <option value="Fresh Juice" data-price="60">Fresh Juice - ₹60</option>
+    </select>
+
+    <label for="quantity">Quantity *</label>
+    <input type="number" id="quantity" min="1" max="50" value="1" required>
+
+    <label for="payment">Payment Method</label>
+    <select id="payment">
+        <option>Cash on Delivery</option>
+        <option>UPI (Demo)</option>
+        <option>Card (Demo)</option>
+    </select>
+
+    <label for="instructions">Special Instructions</label>
+    <textarea id="instructions" placeholder="Any special requests?"></textarea>
+
+    <label for="total">Total Amount</label>
+    <input type="text" id="total" value="₹0" readonly>
+
+    <button type="submit">🛒 Place Order</button>
+    <button type="reset" class="reset">Clear Form</button>
+
+</form>
+
+<section id="result" aria-live="polite">
+    <h2>✅ Order Placed Successfully!</h2>
+    <div id="details"></div>
+    <p><strong>Status:</strong> Waiting in queue</p>
+    <p>This is a demonstration. No real order or payment is sent.</p>
+</section>
+
+<footer>Food Ordering and Order Processing System | Java Mini Project</footer>
+
+</div>
+
+<script>
+const food = document.getElementById("food");
+const quantity = document.getElementById("quantity");
+const total = document.getElementById("total");
+const form = document.getElementById("orderForm");
+const result = document.getElementById("result");
+
+function calculateTotal() {
+    const price = Number(food.selectedOptions[0].dataset.price || 0);
+    const qty = Math.max(1, Number(quantity.value) || 1);
+    total.value = "₹" + (price * qty);
+}
+
+food.addEventListener("change", calculateTotal);
+quantity.addEventListener("input", calculateTotal);
+
+form.addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    if (!form.reportValidity()) return;
+
+    const price = Number(food.selectedOptions[0].dataset.price);
+    const qty = Number(quantity.value);
+    const orderId = "FD" + Date.now().toString().slice(-7);
+
+    const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    }[char]));
+
+    document.getElementById("details").innerHTML = `
+        <p><strong>Order ID:</strong> ${orderId}</p>
+        <p><strong>Name:</strong> ${escapeHTML(document.getElementById("name").value)}</p>
+        <p><strong>Food:</strong> ${escapeHTML(food.value)}</p>
+        <p><strong>Quantity:</strong> ${qty}</p>
+        <p><strong>Total:</strong> ₹${price * qty}</p>
+        <p><strong>Address:</strong> ${escapeHTML(document.getElementById("address").value)}</p>
+        <p><strong>Payment:</strong> ${escapeHTML(document.getElementById("payment").value)}</p>
+    `;
+
+    result.style.display = "block";
+    result.scrollIntoView({ behavior: "smooth", block: "nearest" });
+});
+
+form.addEventListener("reset", function() {
+    setTimeout(function() {
+        result.style.display = "none";
+        calculateTotal();
+    }, 0);
+});
+</script>
+
+</body>
+</html>
